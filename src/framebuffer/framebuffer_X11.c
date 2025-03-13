@@ -34,7 +34,7 @@ static Atom wm_delete_window;
 static XImage *img;
 
 #define FB_WIDTH 800
-#define FB_HEIGHT 500
+#define FB_HEIGHT 420 //500
 
 fb_t fb_x = {
     .buf = NULL,
