@@ -34,7 +34,7 @@ endif
 
 panpi: $(SOURCES)
 	$(info $(COMPILE_X11))
-	gcc $(CFLAGS) $(LDFLAGS) -o panpi $^
+	gcc $(CFLAGS) $^ $(LDFLAGS) -o panpi
 
 clean:
 	rm -f panpi
