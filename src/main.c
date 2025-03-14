@@ -26,6 +26,7 @@
 static volatile bool should_run = true;
 
 unsigned sample_rate = 0;
+unsigned fft_navg = 0;
 
 /*******************************************************************************
  * Code
@@ -49,11 +50,13 @@ int main(int argc, const char *argv[])
 
     config_init();
     sample_rate = config.sample_rate;
+    fft_navg = config.fft_navg;
 
     unsigned sgam_width = display_open(sample_rate);
     unsigned fft_size = sgam_width;
 
     complex double *iq_samples = malloc(sizeof(complex double) * fft_size);
+    double *dbm_values1 = malloc(sizeof(double) * fft_size);
     double *dbm_values = malloc(sizeof(double) * fft_size);
 
     dsp_init(fft_size, INT16_MAX);
@@ -64,9 +67,16 @@ int main(int argc, const char *argv[])
 
     while (should_run)
     {
-        capture.get(iq_samples, fft_size);
-
-        dsp_process(iq_samples, dbm_values);
+        for (unsigned j=0; j<fft_size; j++) {
+            dbm_values[j] = 0.0e0;
+        }
+        for (unsigned i=0; i<fft_navg; i++) {
+            capture.get(iq_samples, fft_size);
+            dsp_process(iq_samples, dbm_values1);
+            for (unsigned j=0; j<fft_size; j++) {
+                dbm_values[j] += dbm_values1[j]/fft_navg;
+            }
+        }
 
         display_update(dbm_values);
 
@@ -83,7 +93,7 @@ int main(int argc, const char *argv[])
     display_close();
 
     free(iq_samples);
-    free(dbm_values);
+    free(dbm_values1);
 
     dsp_free();
 

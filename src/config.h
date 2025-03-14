@@ -21,6 +21,7 @@ typedef struct
     char file[CONFIG_STR_LEN];
     char fb_dev[CONFIG_STR_LEN];
     unsigned sample_rate;
+    unsigned fft_navg;
     double capture_gain;
     double dc_alpha;
     bool x_window;
